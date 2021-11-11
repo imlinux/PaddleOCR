@@ -1,5 +1,5 @@
 Global:
-  use_gpu: false
+  use_gpu: true
   epoch_num: 500
   log_smooth_window: 20
   print_batch_step: 10
@@ -9,7 +9,7 @@ Global:
   eval_batch_step: [0, 2000]
   cal_metric_during_train: True
   pretrained_model:
-  checkpoints: 
+  checkpoints:
   save_inference_dir:
   use_visualdl: False
   infer_img: doc/imgs_words/ch/word_1.jpg
@@ -63,14 +63,14 @@ Metric:
 Train:
   dataset:
     name: SimpleDataSet
-    data_dir: /home/dong/tmp/hwdb2/img
-    label_file_list: ["/home/dong/tmp/hwdb2/img/HWDB2.0Train_images/label.txt", "/home/dong/tmp/hwdb2/img/HWDB2.1Train_images/label.txt", "/home/dong/tmp/hwdb2/img/HWDB2.2Train_images/label.txt"]
+    data_dir: /root/img
+    label_file_list: ["/root/img/HWDB2.0Train_images/label.txt", "/root/img/HWDB2.1Train_images/label.txt", "/root/img/HWDB2.2Train_images/label.txt"]
     ratio_list: [1.0, 1.0, 1.0]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
           channel_first: False
-      - RecAug: 
+      - RecAug:
       - CTCLabelEncode: # Class handling label
       - RecResizeImg:
           image_shape: [3, 32, 320]
@@ -85,8 +85,8 @@ Train:
 Eval:
   dataset:
     name: SimpleDataSet
-    data_dir: /home/dong/tmp/hwdb2/img
-    label_file_list: ["/home/dong/tmp/hwdb2/img/HWDB2.0Train_images/label.txt"]
+    data_dir: /root/img
+    label_file_list: ["/root/img/HWDB2.0Train_images/eval.txt"]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
