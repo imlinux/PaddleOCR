@@ -1,5 +1,5 @@
 Global:
-  use_gpu: true
+  use_gpu: false
   epoch_num: 500
   log_smooth_window: 20
   print_batch_step: 10
@@ -12,7 +12,7 @@ Global:
   checkpoints:
   save_inference_dir:
   use_visualdl: False
-  infer_img: doc/imgs_words/ch/word_1.jpg
+  infer_img: /home/dong/tmp/zuowen_ocr/crop_img/
   # for data or label process
   character_dict_path: ppocr/utils/ppocr_keys_v1.txt
   character_type: ch
@@ -82,8 +82,8 @@ Train:
 Eval:
   dataset:
     name: SimpleDataSet
-    data_dir: ./train_data/
-    label_file_list: ["./train_data/val_list.txt"]
+    data_dir: /home/dong/tmp/zuowen_ocr
+    label_file_list: ["/home/dong/tmp/zuowen_ocr/rec_gt.txt"]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR

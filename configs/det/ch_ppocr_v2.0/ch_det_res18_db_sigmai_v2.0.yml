@@ -1,5 +1,5 @@
 Global:
-  use_gpu: true
+  use_gpu: false
   epoch_num: 1200
   log_smooth_window: 20
   print_batch_step: 2
@@ -116,6 +116,8 @@ Eval:
           channel_first: False
       - DetLabelEncode: # Class handling label
       - DetResizeForTest:
+          limit_type: 'max'
+          limit_side_len: 960
 #           image_shape: [736, 1280]
       - NormalizeImage:
           scale: 1./255.
