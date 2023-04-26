@@ -20,6 +20,7 @@ import numpy as np
 import json
 from PIL import Image, ImageDraw, ImageFont
 import math
+import paddle
 from paddle import inference
 import time
 from ppocr.utils.logging import get_logger
@@ -187,7 +188,7 @@ def create_predictor(args, mode, logger):
                 "nearest_interp_v2_0.tmp_0": [1, 256, 2, 2]
             }
             max_input_shape = {
-                "x": [1, 3, 2000, 2000],
+                "x": [1, 3, 1280, 1280],
                 "conv2d_92.tmp_0": [1, 120, 400, 400],
                 "conv2d_91.tmp_0": [1, 24, 200, 200],
                 "conv2d_59.tmp_0": [1, 96, 400, 400],
@@ -237,16 +238,16 @@ def create_predictor(args, mode, logger):
             opt_input_shape.update(opt_pact_shape)
         elif mode == "rec":
             min_input_shape = {"x": [1, 3, 32, 10]}
-            max_input_shape = {"x": [args.rec_batch_num, 3, 32, 2000]}
+            max_input_shape = {"x": [args.rec_batch_num, 3, 32, 1024]}
             opt_input_shape = {"x": [args.rec_batch_num, 3, 32, 320]}
         elif mode == "cls":
             min_input_shape = {"x": [1, 3, 48, 10]}
-            max_input_shape = {"x": [args.rec_batch_num, 3, 48, 2000]}
+            max_input_shape = {"x": [args.rec_batch_num, 3, 48, 1024]}
             opt_input_shape = {"x": [args.rec_batch_num, 3, 48, 320]}
         else:
             min_input_shape = {"x": [1, 3, 10, 10]}
-            max_input_shape = {"x": [1, 3, 1000, 1000]}
-            opt_input_shape = {"x": [1, 3, 500, 500]}
+            max_input_shape = {"x": [1, 3, 512, 512]}
+            opt_input_shape = {"x": [1, 3, 256, 256]}
         config.set_trt_dynamic_shape_info(min_input_shape, max_input_shape,
                                           opt_input_shape)
 
@@ -286,11 +287,17 @@ def create_predictor(args, mode, logger):
 
 
 def get_infer_gpuid():
-    cmd = "nvidia-smi"
+    if not paddle.fluid.core.is_compiled_with_rocm():
+        cmd = "nvidia-smi"
+    else:
+        cmd = "rocm-smi"
     res = os.popen(cmd).readlines()
     if len(res) == 0:
         return None
-    cmd = "env | grep CUDA_VISIBLE_DEVICES"
+    if not paddle.fluid.core.is_compiled_with_rocm():
+        cmd = "env | grep CUDA_VISIBLE_DEVICES"
+    else:
+        cmd = "env | grep HIP_VISIBLE_DEVICES"
     env_cuda = os.popen(cmd).readlines()
     if len(env_cuda) == 0:
         return 0
